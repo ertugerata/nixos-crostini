@@ -20,7 +20,7 @@
   # Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     # TODO: Replace `aldur` with your username
-    aldur = {
+    ertugrulerata = {
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
         # TODO: Add your SSH public key(s) here if you plan on using SSH to connect
