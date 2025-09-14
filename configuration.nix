@@ -9,13 +9,15 @@
     # ./users.nix
   ];
 
-  networking.hostName = "lxc-nixos";
+  networking.hostName = "penguin-nixos";
 
   # Enable flakes: https://nixos.wiki/wiki/Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Search for additional packages here: https://search.nixos.org/packages
-  environment.systemPackages = [ pkgs.neovim ];
+  environment.systemPackages = [ pkgs.neovim
+  				 pkgs.git
+				 pkgs.docker];
 
   # Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
