@@ -16,8 +16,10 @@
 
   # Search for additional packages here: https://search.nixos.org/packages
   environment.systemPackages = [ pkgs.neovim
-  				 pkgs.git
-				 pkgs.docker];
+  				 pkgs.git];
+
+  # Enable docker
+  virtualisation.docker.enable = true;
 
   # Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
