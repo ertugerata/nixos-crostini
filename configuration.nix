@@ -16,8 +16,7 @@
 
   # Search for additional packages here: https://search.nixos.org/packages
   environment.systemPackages = [ pkgs.neovim
-  				 pkgs.git
-				 pkgs.gh];
+  				 pkgs.git];
 
   # Enable docker
   virtualisation.docker.enable = true;
