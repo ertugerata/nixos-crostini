@@ -1,24 +1,35 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { nixos-generators, nixpkgs, self, ... }@inputs:
+  outputs =
+    {
+      nixos-generators,
+      nixpkgs,
+      self,
+      ...
+    }@inputs:
     let
-      modules = [ ./configuration.nix self.nixosModules.default ];
+      modules = [ ./configuration.nix ];
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
       specialArgs = { inherit inputs; };
 
       # https://ayats.org/blog/no-flake-utils
-      forAllSystems = function:
-        nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ]
-        (system: function system);
+      forAllSystems = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
 
-    in {
+      # NOTE: change to `x86_64-linux` if that is your architecture.
+      targetSystem = "aarch64-linux";
+
+    in
+    {
       packages = forAllSystems (system: rec {
         lxc = nixos-generators.nixosGenerate {
           inherit system specialArgs modules;
@@ -29,7 +40,7 @@
           format = "lxc-metadata";
         };
 
-        default = nixpkgs.legacyPackages.${system}.stdenv.mkDerivation {
+        lxc-image-and-metadata = nixpkgs.legacyPackages.${system}.stdenv.mkDerivation {
           name = "lxc-image-and-metadata";
           dontUnpack = true;
 
@@ -39,19 +50,24 @@
             ln -s ${lxc}/tarball/*.tar.xz $out/image.tar.xz
           '';
         };
+
+        default = self.packages.${system}.lxc-image-and-metadata;
+      });
+
+      checks = forAllSystems (system: {
+        inherit (self.outputs.packages.${system}) lxc-image-and-metadata;
       });
 
       # This allows you to re-build the container from inside the container.
       nixosConfigurations.lxc-nixos = nixpkgs.lib.nixosSystem {
-        inherit specialArgs modules;
-
-        # NOTE: change to `x86_64-linux` if that is your architecture.
-        system = "aarch64-linux";
+        inherit specialArgs;
+        modules = modules ++ [ self.nixosModules.crostini ];
+        system = targetSystem;
       };
 
       nixosModules = rec {
-        nixos-crostini = ./crostini.nix;
-        default = nixos-crostini;
+        crostini = ./crostini.nix;
+        default = crostini;
       };
 
       templates.default = {
