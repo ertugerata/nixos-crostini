@@ -32,11 +32,13 @@
     {
       packages = forAllSystems (system: rec {
         lxc = nixos-generators.nixosGenerate {
-          inherit system specialArgs modules;
+          inherit system specialArgs;
+          modules = modules ++ [ self.nixosModules.crostini ];
           format = "lxc";
         };
         lxc-metadata = nixos-generators.nixosGenerate {
-          inherit system specialArgs modules;
+          inherit system specialArgs;
+          modules = modules ++ [ self.nixosModules.crostini ];
           format = "lxc-metadata";
         };
 
