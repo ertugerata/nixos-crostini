@@ -2,7 +2,14 @@
 # https://github.com/Misterio77/nix-starter-configs/blob/cd2634edb7742a5b4bbf6520a2403c22be7013c6/minimal/nixos/configuration.nix
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
-{ inputs, lib, config, pkgs, ... }: {
+{
+  # inputs,
+  # lib,
+  # config,
+  pkgs,
+  ...
+}:
+{
   imports = [
     # You can import other NixOS modules here.
     # You can also split up your configuration and import pieces of it here:
@@ -12,24 +19,32 @@
   networking.hostName = "penguin-nixos";
 
   # Enable flakes: https://nixos.wiki/wiki/Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Search for additional packages here: https://search.nixos.org/packages
-  environment.systemPackages = [ pkgs.neovim
-                                 pkgs.gh
-  				 pkgs.git];
+  environment.systemPackages = with pkgs; [
+    neovim
+    gh
+    git
+  ];
 
   # Enable docker
   virtualisation.docker.enable = true;
 
   # Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
-    # TODO: Replace `aldur` with your username
+    # TODO: Replace `aldur` with the username you picked when configuring Linux
+    # in ChromeOS.
     ertugrulerata = {
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
         # TODO: Add your SSH public key(s) here if you plan on using SSH to connect
       ];
+      # Upstream added 'linger = true' so we include it here.
+      linger = true;
       extraGroups = [ "wheel" "docker" ];
     };
   };
@@ -43,6 +58,9 @@
       PasswordAuthentication = false;
     };
   };
+
+  # Upstream added this convenience
+  security.sudo.wheelNeedsPassword = false;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.05";
