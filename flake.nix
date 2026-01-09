@@ -14,7 +14,10 @@
       ...
     }@inputs:
     let
-      modules = [ ./configuration.nix ];
+      modules = [
+        ./configuration.nix
+        ./crostini.nix
+      ];
 
       # https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system
       specialArgs = { inherit inputs; };
@@ -60,8 +63,7 @@
 
       # This allows you to re-build the container from inside the container.
       nixosConfigurations.lxc-nixos = nixpkgs.lib.nixosSystem {
-        inherit specialArgs;
-        modules = modules ++ [ self.nixosModules.crostini ];
+        inherit specialArgs modules;
         system = targetSystem;
       };
 
