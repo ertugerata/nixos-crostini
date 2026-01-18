@@ -67,3 +67,21 @@ Here is a _very minimal_ example:
   };
 }
 ```
+
+## Modifications & Build Artifacts
+
+This fork includes several specific modifications and improvements:
+
+1.  **User Configuration**: The default user is pre-configured as `ertugrulerata` in `configuration.nix`.
+2.  **CI/CD Pipeline**: A GitHub Actions workflow (`.github/workflows/ci.yml`) is included to automatically build the LXC image and metadata.
+    *   **Artifacts**: Every build produces `image.tar.xz` and `metadata.tar.xz`, which can be downloaded from the "Actions" tab in GitHub.
+3.  **Flake Fixes**: The `crostini.nix` module is explicitly included in the flake outputs to ensure critical files (like `/etc/gshadow` via `common.nix`) are generated correctly during the LXC build.
+4.  **Baguette Exclusion**: Specific "Baguette" related features have been excluded to keep the image minimal and focused on standard Crostini usage.
+
+### Downloading the Build
+
+You do not need to build locally if you use the CI artifacts:
+1. Go to the **Actions** tab of this repository.
+2. Click on the latest successful workflow run.
+3. Scroll down to **Artifacts** and download `nixos-crostini-x86_64-linux`.
+4. Extract the zip file to get `image.tar.xz` and `metadata.tar.xz`.
