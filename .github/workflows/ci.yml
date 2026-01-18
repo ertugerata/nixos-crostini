@@ -11,7 +11,9 @@ jobs:
   build:
     strategy:
       matrix:
-        system: [x86_64-linux, aarch64-linux]
+        system:
+          - x86_64-linux
+          # - aarch64-linux # Uncomment to build for aarch64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
